@@ -10,9 +10,27 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 import datetime
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 # https://nbviewer.org/gist/talbertc-usgs/18f8901fc98f109f2b71156cf3ac81cd
 
-with open("/Users/seokcheon/Library/CloudStorage/OneDrive-Personal/CIT/Technovation-Girls/rok---report-of-kickboard-default-rtdb-export.json", "r") as f:
+
+# get DB
+cred = credentials.Certificate("Firebase 프로젝트 설정 -> 서비스계정 항목 -> 새 비공개 키 주소")
+firebase_admin.initialize_app(cred,{
+    'databaseURL' : 'DB URL'
+})
+
+dir = db.reference()
+# print(dir.get())
+
+with open('data.json', 'w') as f:
+    json.dump(dir.get(), f)
+
+
+
+with open("./data.json", "r") as f:
 	data = json.load(f)
 
 months = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -290,3 +308,10 @@ for t in autotexts:
 plt.title('Reports in '+year+'   Total : ' + str(sum(brands)), loc='center', pad=5)
 # plt.show()
 plt.savefig('pie_chart.png')
+
+
+msg = datetime.date.today()
+
+os.system('git add .')
+os.system('git commit -m "Update %s"' % msg)
+os.system('git push origin main')
